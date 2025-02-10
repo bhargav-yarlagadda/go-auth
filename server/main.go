@@ -24,6 +24,7 @@ func main() {
 
 	app.Post("/auth/sign-up", handlers.SignUp)
 	app.Post("/auth/sign-in", handlers.SignIn)
+	app.Get("/auth/validate",handlers.Validate)
 
 	// Start the server
 	app.Listen(":8080")

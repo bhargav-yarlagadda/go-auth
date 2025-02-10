@@ -6,9 +6,9 @@ import axios from "axios";
 import { userContext } from "./UserWrapper";
 
 const SignIn = () => {
-
   const router = useRouter();
-    const {setIsAuthenticated} = useContext(userContext)
+  const { setIsAuthenticated, setToken ,setUser} = useContext(userContext);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -18,27 +18,37 @@ const SignIn = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
   const authenticateUser = async () => {
     try {
-        const resp = await axios.post("http://localhost:8080/auth/sign-in", formData);
-        const data = resp.data; // No need for `await` here
-
-        if (resp.status === 200) {
-            setIsAuthenticated(true);
-            router.push('/');
-        } else {
-            console.error("Unexpected response status:", resp.status);
-        }
+      const resp = await axios.post("http://localhost:8080/auth/sign-in", formData);
+      const data = resp.data;
+      if(data.user){
+        setUser(
+          {
+            id:data.user.id,
+            name:data.user.name,
+            email:data.user.email
+          }
+        )
+      }
+      if (resp.status === 200) {
+        localStorage.setItem("token", data.token); // Store token in localStorage
+        setToken(data.token); // Update token state
+        setIsAuthenticated(true); // Set authentication status
+        console.log("jwt token: ",data.token)
+        
+        router.push('/');
+      } else {
+        console.error("Unexpected response status:", resp.status);
+      }
     } catch (error) {
-        console.error("Sign-up failed:", error);
+      console.error("Sign-in failed:", error);
     }
-};
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await authenticateUser()
-    // TODO: Add authentication logic
+    await authenticateUser();
   };
 
   return (
