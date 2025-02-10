@@ -55,7 +55,7 @@ func SignUp(c *fiber.Ctx) error {
 
 func SignIn(c *fiber.Ctx) error {
 	var credentials models.SignInData 
-	if err := c.BodyParser(&credentials); err != nil {
+	if err := c.BodyParser(&credentials); err != nil {  
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
