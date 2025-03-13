@@ -37,46 +37,45 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true); // Fix: Ensure loading state prevents redirection
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
+        const initializeAuth = async () => {
+            const storedToken = localStorage.getItem('token');
+            if (!storedToken) {
+                setLoading(false);
+                return;
+            }
             setToken(storedToken);
-        }
-        setLoading(false); // Fix: Prevent redirect before token is retrieved
-    }, []);
-
-    useEffect(() => {
-        const validateToken = async () => {
-            if (!token) return;
+            
             try {
-                const response = await axios.get("http://localhost:8080/auth/validate", {
-                    headers: { Authorization: `Bearer ${token}` }
+                const { data } = await axios.get('http://localhost:8080/auth/validate', {
+                    headers: { Authorization: `Bearer ${storedToken}` },
                 });
-                setUser(response.data);
+                setUser(data);
                 setIsAuthenticated(true);
-            } catch (error) {
+            } catch {
                 logout();
+            } finally {
+                setLoading(false);
             }
         };
 
-        if (token) validateToken();
-    }, [token]);
+        initializeAuth();
+    }, []);
 
-    // ✅ Fix: Only redirect if loading is false and token is absent
     useEffect(() => {
         if (!loading && !token) {
-            router.push("/auth/sign-in");
+            router.push('/auth/sign-in');
         }
-    }, [loading, token]); 
+    }, [loading, token, router]);
 
     const logout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem('token');
         setUser(null);
         setToken(null);
         setIsAuthenticated(false);
-        router.push("/auth/sign-in");
+        router.push('/auth/sign-in');
     };
 
     return (
