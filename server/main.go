@@ -13,6 +13,7 @@ func main() {
 	app := fiber.New()
 
 	// Enable CORS with specific origins
+	
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:3000", // Replace with frontend URL
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",

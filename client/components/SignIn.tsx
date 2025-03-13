@@ -26,11 +26,16 @@ const SignIn = () => {
         setUser(
           {
             id:data.user.id,
-            name:data.user.name,
+            name:data.user.name ,
             email:data.user.email
           }
         )
       }
+      console.log({
+        id:data.user.id,
+        name:data.user.name,
+        email:data.user.email
+      })
       if (resp.status === 200) {
         localStorage.setItem("token", data.token); // Store token in localStorage
         setToken(data.token); // Update token state
@@ -42,7 +47,7 @@ const SignIn = () => {
         console.error("Unexpected response status:", resp.status);
       }
     } catch (error) {
-      console.error("Sign-in failed:", error);
+      console.log("Sign-in failed:", error);
     }
   };
 

@@ -73,13 +73,13 @@ func SignIn(c *fiber.Ctx) error {
 
 	err := userCollection.FindOne(context.TODO(), bson.M{"email": credentials.Email}).Decode(&user)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid email or password"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid email "})
 	}
 
 	// Compare password
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password))
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid email or password"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid password"})
 	}
 
 	// Generate JWT token
@@ -88,7 +88,7 @@ func SignIn(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not generate token"})
 	}
 
-	// Return token
+	// Return token 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
 		"token":   token,

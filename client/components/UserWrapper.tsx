@@ -43,7 +43,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         const storedToken = localStorage.getItem("token");
         if (storedToken) {
             setToken(storedToken);
-            setIsAuthenticated(true);
         }
         setLoading(false); // Fix: Prevent redirect before token is retrieved
     }, []);
